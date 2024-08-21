@@ -11,6 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { FriendManagerComponent } from './components/friend-manager/friend-manager.component';
+import { PreSalaComponent } from './pre-sala/pre-sala.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { FriendManagerComponent } from './components/friend-manager/friend-manag
     RegisterComponent,
     LoginComponent,
     DashboardComponent,
-    FriendManagerComponent
+    FriendManagerComponent,
+    PreSalaComponent
   ],
   imports: [
     BrowserModule,
