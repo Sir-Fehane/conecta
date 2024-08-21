@@ -35,7 +35,6 @@ export class BoardComponent implements OnInit {
       .map(() => Array(this.columns).fill(0));
   }
 
-  // Escuchar eventos de WebSocket
   private listenToSocketEvents(): void {
     this.socketService.on(`move_${this.roomId}`, (data: any) => {
       this.board = data.board;
@@ -44,7 +43,6 @@ export class BoardComponent implements OnInit {
     });
   }
 
-  // Manejar el drop de una pieza
   dropPiece(colIndex: number): void {
     if (!this.isMyTurn) {
       return alert('No es tu turno');
