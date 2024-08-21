@@ -8,6 +8,7 @@ import { PreSalaComponent } from './pre-sala/pre-sala.component';
 
 import { AuthGuard } from './auth.guard'
 import { PlayerGamesComponent } from './player-games/player-games.component'
+import { BoardComponent } from './board/board.component'
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate:[] },
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'friends', component: FriendManagerComponent, canActivate:[AuthGuard] },
   { path: 'room/:code', component: PreSalaComponent, canActivate: [AuthGuard]},
   { path: 'history', component: PlayerGamesComponent, canActivate: [AuthGuard]},
+  { path: 'board', component: BoardComponent, canActivate: [AuthGuard]},
 ]
 
 @NgModule({

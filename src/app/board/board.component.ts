@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { SocketService } from '../services/socket.service';
 
 @Component({
@@ -7,34 +8,43 @@ import { SocketService } from '../services/socket.service';
   styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
-  @Input() rows: number = 9;
-  @Input() columns: number = 9;
-  @Input() roomId: string = '';
-  @Input() board: number[][] = [];
+  rows: number = 5;
+  columns: number = 5;
+  roomId: string = ''; // Se recibe del parámetro de consulta
+  board: number[][] = [];
   currentPlayer: number = 1;
-  isMyTurn: boolean = true;
+  isMyTurn: boolean = true; // Asume que el jugador 1 empieza
 
-  constructor(private socketService: SocketService, private cdRef: ChangeDetectorRef) {}
+  constructor(private route: ActivatedRoute, private socketService: SocketService) {}
 
   ngOnInit(): void {
-    this.initializeBoard();
-    this.listenToSocketEvents();
-  }
+    // Extraer los parámetros de consulta
+    this.route.queryParams.subscribe(params => {
+      this.rows = +params['height'] || 5; // Convertir a número y asignar valor predeterminado
+      this.columns = +params['width'] || 5; // Convertir a número y asignar valor predeterminado
+      this.roomId = params['code'] || ''; // Asignar el roomId
 
-  private listenToSocketEvents(): void {
-    this.socketService.on('game_update', (data: any) => {
-      if (data.game) {
-        this.board = JSON.parse(data.game.board);
-        this.currentPlayer = data.game.currentTurn;
-        this.isMyTurn = this.currentPlayer === 1; // Ajusta la lógica si es necesario
-        this.cdRef.detectChanges(); // Asegura que la vista se actualiza
-      }
-      if (data.winner) {
-        alert(`Jugador ${data.winner.username} ha ganado!`);
-      }
+      this.initializeBoard();
+      this.listenToSocketEvents();
     });
   }
 
+  initializeBoard(): void {
+    this.board = Array(this.rows)
+      .fill(0)
+      .map(() => Array(this.columns).fill(0));
+  }
+
+  // Escuchar eventos de WebSocket
+  private listenToSocketEvents(): void {
+    this.socketService.on(`move_${this.roomId}`, (data: any) => {
+      this.board = data.board;
+      this.currentPlayer = data.currentPlayer;
+      this.isMyTurn = !this.isMyTurn;
+    });
+  }
+
+  // Manejar el drop de una pieza
   dropPiece(colIndex: number): void {
     if (!this.isMyTurn) {
       return alert('No es tu turno');
@@ -43,18 +53,40 @@ export class BoardComponent implements OnInit {
     for (let rowIndex = this.rows - 1; rowIndex >= 0; rowIndex--) {
       if (this.board[rowIndex][colIndex] === 0) {
         this.board[rowIndex][colIndex] = this.currentPlayer;
-        // Enviar movimiento al servidor
-        this.socketService.emit('move', { roomId: this.roomId, board: this.board, currentPlayer: this.currentPlayer });
+        if (this.checkWin(rowIndex, colIndex)) {
+          this.socketService.emit('gameWon', { roomId: this.roomId, winner: this.currentPlayer });
+          alert(`Jugador ${this.currentPlayer} gana!`);
+          this.initializeBoard();
+        } else {
+          this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
+          this.isMyTurn = !this.isMyTurn;
+          this.socketService.emit('move', { roomId: this.roomId, board: this.board, currentPlayer: this.currentPlayer });
+        }
         break;
       }
     }
   }
 
-  initializeBoard(): void {
-    this.board = Array.from({ length: this.rows }, () => Array(this.columns).fill(0));
-    this.currentPlayer = 1;
-    this.isMyTurn = true;
-    this.cdRef.detectChanges(); // Asegura que la vista se actualiza
+  checkWin(row: number, col: number): boolean {
+    return this.checkDirection(row, col, 1, 0) || // Horizontal
+           this.checkDirection(row, col, 0, 1) || // Vertical
+           this.checkDirection(row, col, 1, 1) || // Diagonal ascendente
+           this.checkDirection(row, col, 1, -1);  // Diagonal descendente
+  }
+
+  checkDirection(row: number, col: number, rowDir: number, colDir: number): boolean {
+    let count = 0;
+    for (let i = -3; i <= 3; i++) {
+      const r = row + i * rowDir;
+      const c = col + i * colDir;
+      if (r >= 0 && r < this.rows && c >= 0 && c < this.columns && this.board[r][c] === this.currentPlayer) {
+        count++;
+        if (count === 4) return true;
+      } else {
+        count = 0;
+      }
+    }
+    return false;
   }
 
   getPieceClass(row: number, col: number): string {

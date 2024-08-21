@@ -2,9 +2,26 @@
 <div class="room-details">
   <p><strong>Creador:</strong> {{ creator }}</p>
   <p><strong>Jugador 2:</strong> {{ player2 }}</p>
-
-  <!-- Renderizar el BoardComponent solo cuando board esté completamente inicializado -->
-  <ng-container *ngIf="board.length > 0 && board[0].length > 0">
-    <app-board [rows]="board.length" [columns]="board[0].length" [roomId]="code?.toString() || ''" [board]="board"></app-board>
-  </ng-container>
+  <p><strong>Código de sala:</strong> {{ code }}</p>
 </div>
+<form (ngSubmit)="onSubmit()" #numberForm="ngForm">
+  <div>
+    <label for="width">Número 1:</label>
+    <input type="width" id="width" name="width" [(ngModel)]="width" 
+           required min="6" max="9" #number1Ctrl="ngModel">
+    <div *ngIf="number1Ctrl.invalid && number1Ctrl.touched">
+      El número debe ser exactamente 6.
+    </div>
+  </div>
+
+  <div>
+    <label for="height">Número 2:</label>
+    <input type="height" id="height" name="height" [(ngModel)]="height" 
+           required min="6" max="9" #number2Ctrl="ngModel">
+    <div *ngIf="number2Ctrl.invalid && number2Ctrl.touched">
+      El número debe ser exactamente 6.
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="numberForm.invalid">Enviar</button>
+</form>

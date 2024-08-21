@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GameService } from 'src/app/services/game.service';
 import { Game } from 'src/app/game'; // Ajusta la ruta según tu modelo
 
@@ -15,9 +15,12 @@ export class PreSalaComponent implements OnInit {
   board: number[][] = [];
   width: number = 9;
   height: number = 9;
+  number1: number = 6;
+  number2: number = 6;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private gameService: GameService
   ) { }
 
@@ -61,5 +64,10 @@ export class PreSalaComponent implements OnInit {
         this.board[r][c] = boardArray[r][c] || 0;
       }
     }
+  }
+
+  onSubmit() {
+    console.log(this.width, this.height);
+    this.router.navigate(['/board'], { queryParams: { width: this.width, height: this.height, code: this.code } });
   }
 }
