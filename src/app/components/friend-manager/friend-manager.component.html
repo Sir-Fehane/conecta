@@ -1,20 +1,24 @@
 <div class="friend-manager">
-    <h2>Manage Friends</h2>
-  
-    <form [formGroup]="friendForm" (ngSubmit)="addFriend()">
-      <label for="username">Add Friend by Username:</label>
-      <input id="username" formControlName="username" placeholder="Enter friend's username">
-      <button type="submit">Add Friend</button>
-    </form>
-  
-    <h3>Friend List</h3>
-    <ul>
-      <li *ngFor="let friend of friends">
-        {{ friend.username }} ({{ friend.status }})
-        <button (click)="acceptFriend(friend.username)" *ngIf="friend.status === 'pending'">Accept</button>
-        <button (click)="blockFriend(friend.username)" *ngIf="friend.status === 'accepted'">Block</button>
-      </li>
-    </ul>
-  </div>
-  <button (click)="returnDashboard()">Return</button>
-  
+  <h2>Gestionar Amigos</h2>
+
+  <!-- Formulario para añadir amigos -->
+  <form [formGroup]="friendForm" (ngSubmit)="addFriend()">
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input id="username" formControlName="username" placeholder="Añadir amigo" />
+      <button type="submit" [disabled]="friendForm.invalid">Enviar Solicitud</button>
+    </div>
+  </form>
+
+  <!-- Lista de amigos -->
+  <ul class="friends-list">
+    <li *ngFor="let friend of friends">
+      {{ friend.username }} - {{ friend.status }}
+      <button *ngIf="friend.status === 'pending'" (click)="acceptFriend(friend.username)">Aceptar</button>
+      <button *ngIf="friend.status === 'pending'" (click)="blockFriend(friend.username)">Bloquear</button>
+    </li>
+  </ul>
+
+  <!-- Botón para volver al dashboard -->
+  <button (click)="returnDashboard()">Volver al Dashboard</button>
+</div>

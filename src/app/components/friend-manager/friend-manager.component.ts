@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FriendService } from 'src/app/services/friend.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FriendsService } from '../../services/friend.service';
 
 @Component({
   selector: 'app-friend-manager',
@@ -14,7 +14,7 @@ export class FriendManagerComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private friendService: FriendService,
+    private friendsService: FriendsService,
     private router: Router
   ) {
     this.friendForm = this.fb.group({
@@ -29,10 +29,11 @@ export class FriendManagerComponent implements OnInit {
   addFriend(): void {
     if (this.friendForm.valid) {
       const username = this.friendForm.get('username')?.value;
-      this.friendService.addFriend(username).subscribe({
+      this.friendsService.addFriend(username).subscribe({
         next: () => {
           alert('Friend request sent.');
           this.loadFriends(); // Refresh the list
+          this.friendForm.reset(); // Clear the form
         },
         error: (err) => alert('Error adding friend: ' + err.message)
       });
@@ -40,7 +41,7 @@ export class FriendManagerComponent implements OnInit {
   }
 
   acceptFriend(username: string): void {
-    this.friendService.acceptFriend(username).subscribe({
+    this.friendsService.acceptFriend(username).subscribe({
       next: () => {
         alert('Friend request accepted.');
         this.loadFriends(); // Refresh the list
@@ -50,7 +51,7 @@ export class FriendManagerComponent implements OnInit {
   }
 
   blockFriend(username: string): void {
-    this.friendService.blockFriend(username).subscribe({
+    this.friendsService.blockFriend(username).subscribe({
       next: () => {
         alert('Friend blocked.');
         this.loadFriends(); // Refresh the list
@@ -60,11 +61,12 @@ export class FriendManagerComponent implements OnInit {
   }
 
   loadFriends(): void {
-    this.friendService.listFriends().subscribe({
+    this.friendsService.listFriends().subscribe({
       next: (data) => this.friends = data,
       error: (err) => alert('Error loading friends: ' + err.message)
     });
   }
+
   returnDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
