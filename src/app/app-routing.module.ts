@@ -4,6 +4,7 @@ import { LoginComponent } from './auth/login/login.component'
 import { RegisterComponent } from './auth/register/register.component'
 import { DashboardComponent } from './dashboard/dashboard.component'
 import { FriendManagerComponent } from './components/friend-manager/friend-manager.component';
+import { PreSalaComponent } from './pre-sala/pre-sala.component';
 
 import { AuthGuard } from './auth.guard'
 
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate:[] },
   { path: 'dashboard', component: DashboardComponent, canActivate:[AuthGuard] },
   { path: 'friends', component: FriendManagerComponent, canActivate:[AuthGuard] },
+  { path: 'room/:code', component: PreSalaComponent, canActivate: [AuthGuard]},
 ]
 
 @NgModule({

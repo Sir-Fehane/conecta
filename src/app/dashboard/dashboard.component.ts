@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 })
 export class DashboardComponent {
   roomForm: FormGroup;
+  creator: string | null = null;
   friendForm: FormGroup;
   code: number | null = null;
 
@@ -30,7 +31,11 @@ export class DashboardComponent {
 
   createRoom(): void {
     this.gameService.createRoom().subscribe({
-      next: (response) => this.code = response.numsala,
+      next: (response) => {
+        this.code = response.numsala;
+        this.creator = response.creator;
+        this.router.navigate(['/room', this.code]);
+      },
       error: (err) => alert('Error creating room: ' + err.message)
     });
   }

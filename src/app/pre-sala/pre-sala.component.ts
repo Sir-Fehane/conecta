@@ -1,25 +1,39 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { GameService } from 'src/app/services/game.service';
 
 @Component({
   selector: 'app-pre-sala',
   templateUrl: './pre-sala.component.html',
   styleUrls: ['./pre-sala.component.scss']
 })
-export class PreSalaComponent {
-  @Input() playerOneName: string = '';
-  @Input() playerTwoName: string = '';
-  
-  selectedRows: number = 6;
-  selectedColumns: number = 6;
+export class PreSalaComponent implements OnInit {
+  code: number | null = null;
+  creator: string | null = null;
+  player2: string | null = null;
 
-  setBoardSize(rows: number, columns: number): void {
-    this.selectedRows = rows;
-    this.selectedColumns = columns;
+  constructor(
+    private route: ActivatedRoute,
+    private gameService: GameService
+  ) { }
+
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      this.code = params['code'];
+      this.getRoomDetails();
+    });
   }
 
-  startGame(): void {
-    // Aquí puedes redirigir al componente del juego pasando las filas y columnas seleccionadas
-    // y otros detalles de los jugadores si es necesario
+  getRoomDetails() {
+    this.gameService.getRoomDetails(this.code!).subscribe(
+      (response) => {
+        // Actualiza la estructura de acceso a las propiedades según la respuesta real
+        this.creator = response.game.playerOneUser.username || null;
+        this.player2 = response.game.playerTwoUser?.username || null;
+      },
+      (error) => {
+        console.error('Error getting room details:', error);
+      }
+    );
   }
 }
-

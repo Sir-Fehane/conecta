@@ -1,22 +1,24 @@
-<div class="pre-sala">
-    <h2>Pre-sala del Juego</h2>
-    <div>
-      <p>Jugador 1: {{ playerOneName }}</p>
-      <p>Jugador 2: {{ playerTwoName }}</p>
+<div class="pre-sala-container">
+    <div class="pre-sala-header">
+      <h2>Sala de juego</h2>
     </div>
   
-    <div class="controls">
-      <label for="rows">Filas:</label>
-      <input type="number" id="rows" [(ngModel)]="selectedRows" min="6" max="9" />
-    
-      <label for="columns">Columnas:</label>
-      <input type="number" id="columns" [(ngModel)]="selectedColumns" min="6" max="9" />
+    <div class="pre-sala-details">
+      <div class="detail-item">
+        <label>Código de la sala:</label>
+        <span>{{ code }}</span>
+      </div>
   
-      <button (click)="setBoardSize(selectedRows, selectedColumns)">Aplicar</button>
+      <div class="detail-item">
+        <label>Creador de la sala:</label>
+        <span>{{ creator }}</span>
+      </div>
+  
+      <div class="detail-item" *ngIf="player2">
+        <label>2do jugador:</label>
+        <span>{{ player2 }}</span>
+      </div>
     </div>
   
-    <button (click)="startGame()">Iniciar Juego</button>
   </div>
-  
-  <app-board [rows]="selectedRows" [columns]="selectedColumns"></app-board>
   

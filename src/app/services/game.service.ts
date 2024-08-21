@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from 'src/environments/environment';
+import { Game } from '../game';
 
 @Injectable({
   providedIn: 'root'
@@ -31,5 +32,9 @@ export class GameService {
   joinRoomByFriend(username: Text): Observable<any> {
     return this.http.post(`${this.apiUrl}/games/join/friend`, { username }, { headers: this.getHeaders() });
   }
+  getRoomDetails(numsala: number) {
+    return this.http.get<Game>(`${this.apiUrl}/room/${numsala}`);
+  }
+  
 }
 
