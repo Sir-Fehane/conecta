@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { FriendManagerComponent } from './components/friend-manager/friend-manager.component';
 import { PreSalaComponent } from './pre-sala/pre-sala.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { PreSalaComponent } from './pre-sala/pre-sala.component';
     LoginComponent,
     DashboardComponent,
     FriendManagerComponent,
-    PreSalaComponent
+    PreSalaComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
