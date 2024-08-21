@@ -38,6 +38,13 @@ export class GameService {
   getPlayerGames(): Observable<Game[]> {
     return this.http.get<Game[]>(`${this.apiUrl}/history`, { headers: this.getHeaders() });
   }
-  
+
+  getGameState(roomId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/game-state/${roomId}`);
+  }
+
+  saveGameState(roomId: string, gameState: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/game-state/${roomId}`, gameState);
+  }
 }
 

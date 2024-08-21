@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SocketService } from '../services/socket.service';
+import { GameService } from '../services/game.service'; // Agrega el servicio para manejar el estado del juego
 
 @Component({
   selector: 'app-board',
@@ -14,25 +15,73 @@ export class BoardComponent implements OnInit {
   board: number[][] = [];
   currentPlayer: number = 1;
   isMyTurn: boolean = true; // Asume que el jugador 1 empieza
+  isPlayerOne: boolean = false; // Agrega esta propiedad
 
-  constructor(private route: ActivatedRoute, private socketService: SocketService) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private socketService: SocketService,
+    private gameService: GameService // Inyecta el servicio para manejar el estado del juego
+  ) {}
 
-  ngOnInit(): void {
-    // Extraer los parámetros de consulta
-    this.route.queryParams.subscribe(params => {
-      this.rows = +params['height'] || 5; // Convertir a número y asignar valor predeterminado
-      this.columns = +params['width'] || 5; // Convertir a número y asignar valor predeterminado
-      this.roomId = params['code'] || ''; // Asignar el roomId
+ngOnInit(): void {
+  this.route.queryParams.subscribe(params => {
+    this.rows = +params['height'] || 5; // Convertir a número y asignar valor predeterminado
+    this.columns = +params['width'] || 5; // Convertir a número y asignar valor predeterminado
+    this.roomId = params['code'] || ''; // Asignar el roomId
 
-      this.initializeBoard();
-      this.listenToSocketEvents();
-    });
+    this.getBoardState(); // Recupera el estado del tablero al iniciar
+    this.listenToSocketEvents();
+    this.checkPlayerRole(); // Verifica si es el jugador 1
+  });
+}
+
+private getBoardState(): void {
+  // Recuperar el estado del tablero desde el servidor
+  this.gameService.getGameState(this.roomId).subscribe(
+    (data: any) => {
+      this.board = data.board;
+      this.currentPlayer = data.currentPlayer;
+      this.isMyTurn = data.isMyTurn;
+    },
+    (error) => {
+      console.error('Error retrieving game state:', error);
+      this.initializeBoard(); // Inicializa el tablero en caso de error
+    }
+  );
+}
+  private checkPlayerRole(): void {
+    // Verificar si el jugador actual es el jugador 1
+    this.gameService.getRoomDetails(+this.roomId).subscribe(
+      (response: any) => {
+        // Suponiendo que el backend te da el rol del jugador actual
+        const currentPlayer = response.currentPlayer; // Ajusta esto según tu implementación
+        this.isPlayerOne = currentPlayer === 1;
+        if (!this.isPlayerOne) {
+          this.isMyTurn = false;
+        }
+      },
+      (error) => {
+        console.error('Error checking player role:', error);
+      }
+    );
   }
 
   initializeBoard(): void {
     this.board = Array(this.rows)
       .fill(0)
       .map(() => Array(this.columns).fill(0));
+  }
+
+  private saveBoardState(): void {
+    // Guardar el estado del tablero en el servidor
+    this.gameService.saveGameState(this.roomId, {
+      board: this.board,
+      currentPlayer: this.currentPlayer,
+      isMyTurn: this.isMyTurn
+    }).subscribe(
+      () => console.log('Game state saved'),
+      (error) => console.error('Error saving game state:', error)
+    );
   }
 
   private listenToSocketEvents(): void {
@@ -44,8 +93,8 @@ export class BoardComponent implements OnInit {
   }
 
   dropPiece(colIndex: number): void {
-    if (!this.isMyTurn) {
-      return alert('No es tu turno');
+    if (!this.isMyTurn || !this.isPlayerOne) {
+      return alert('No es tu turno o no tienes permiso para mover.');
     }
 
     for (let rowIndex = this.rows - 1; rowIndex >= 0; rowIndex--) {
@@ -59,6 +108,7 @@ export class BoardComponent implements OnInit {
           this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
           this.isMyTurn = !this.isMyTurn;
           this.socketService.emit('move', { roomId: this.roomId, board: this.board, currentPlayer: this.currentPlayer });
+          this.saveBoardState(); // Guarda el estado del tablero
         }
         break;
       }
