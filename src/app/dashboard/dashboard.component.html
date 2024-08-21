@@ -1,2 +1,23 @@
-<p>Si quema cuh</p>
+<div class="game-room">
+    <h2>Friends</h2>
+        <button (click)="Friends()">See Friends</button>
+    <h2>Create a Game Room</h2>
+    <button (click)="createRoom()">Create Room</button>
+    <p *ngIf="code">Room Code: {{ code }}</p>
+  
+    <h2>Join a Game Room by Code</h2>
+    <form [formGroup]="roomForm" (ngSubmit)="joinRoom()">
+      <label for="code">Room Code:</label>
+      <input id="code" formControlName="code" type="number" placeholder="Enter Room Code">
+      <button type="submit">Join Room</button>
+    </form>
+  
+    <h2>Join a Friend's Game Room</h2>
+    <form [formGroup]="friendForm" (ngSubmit)="joinRoomByFriend()">
+      <label for="username">Friend username:</label>
+      <input id="username" formControlName="username" type="text" placeholder="Enter Friend's username">
+      <button type="submit">Join Friend's Room</button>
+    </form>
+  </div>
+  
 <router-outlet></router-outlet>

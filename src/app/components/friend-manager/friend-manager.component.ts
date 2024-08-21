@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FriendService } from 'src/app/services/friend.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-friend-manager',
@@ -13,7 +14,8 @@ export class FriendManagerComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private friendService: FriendService
+    private friendService: FriendService,
+    private router: Router
   ) {
     this.friendForm = this.fb.group({
       username: ['', [Validators.required]]
@@ -62,5 +64,8 @@ export class FriendManagerComponent implements OnInit {
       next: (data) => this.friends = data,
       error: (err) => alert('Error loading friends: ' + err.message)
     });
+  }
+  returnDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 }
