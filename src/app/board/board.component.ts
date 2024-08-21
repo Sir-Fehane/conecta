@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SocketService } from '../services/socket.service';
-import { GameService } from '../services/game.service'; // Agrega el servicio para manejar el estado del juego
+import { GameService } from '../services/game.service'; 
 
 @Component({
   selector: 'app-board',
@@ -11,27 +11,27 @@ import { GameService } from '../services/game.service'; // Agrega el servicio pa
 export class BoardComponent implements OnInit {
   rows: number = 5;
   columns: number = 5;
-  roomId: string = ''; // Se recibe del parámetro de consulta
+  roomId: string = '';
   board: number[][] = [];
   currentPlayer: number = 1;
-  isMyTurn: boolean = true; // Asume que el jugador 1 empieza
-  isPlayerOne: boolean = false; // Agrega esta propiedad
+  isMyTurn: boolean = true;
+  isPlayerOne: boolean = false;
 
   constructor(
     private route: ActivatedRoute, 
     private socketService: SocketService,
-    private gameService: GameService // Inyecta el servicio para manejar el estado del juego
+    private gameService: GameService 
   ) {}
 
 ngOnInit(): void {
   this.route.queryParams.subscribe(params => {
-    this.rows = +params['height'] || 5; // Convertir a número y asignar valor predeterminado
-    this.columns = +params['width'] || 5; // Convertir a número y asignar valor predeterminado
-    this.roomId = params['code'] || ''; // Asignar el roomId
+    this.rows = +params['height'] || 5;
+    this.columns = +params['width'] || 5; 
+    this.roomId = params['code'] || ''; 
 
-    this.getBoardState(); // Recupera el estado del tablero al iniciar
+    this.getBoardState(); 
     this.listenToSocketEvents();
-    this.checkPlayerRole(); // Verifica si es el jugador 1
+    this.checkPlayerRole();
   });
 }
 
@@ -45,7 +45,7 @@ private getBoardState(): void {
     },
     (error) => {
       console.error('Error retrieving game state:', error);
-      this.initializeBoard(); // Inicializa el tablero en caso de error
+      this.initializeBoard(); 
     }
   );
 }
@@ -53,8 +53,8 @@ private getBoardState(): void {
     // Verificar si el jugador actual es el jugador 1
     this.gameService.getRoomDetails(+this.roomId).subscribe(
       (response: any) => {
-        // Suponiendo que el backend te da el rol del jugador actual
-        const currentPlayer = response.currentPlayer; // Ajusta esto según tu implementación
+
+        const currentPlayer = response.currentPlayer; 
         this.isPlayerOne = currentPlayer === 1;
         if (!this.isPlayerOne) {
           this.isMyTurn = false;
@@ -73,7 +73,7 @@ private getBoardState(): void {
   }
 
   private saveBoardState(): void {
-    // Guardar el estado del tablero en el servidor
+   
     this.gameService.saveGameState(this.roomId, {
       board: this.board,
       currentPlayer: this.currentPlayer,
@@ -108,7 +108,7 @@ private getBoardState(): void {
           this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
           this.isMyTurn = !this.isMyTurn;
           this.socketService.emit('move', { roomId: this.roomId, board: this.board, currentPlayer: this.currentPlayer });
-          this.saveBoardState(); // Guarda el estado del tablero
+          this.saveBoardState(); 
         }
         break;
       }

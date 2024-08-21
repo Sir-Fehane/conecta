@@ -32,8 +32,8 @@ export class FriendManagerComponent implements OnInit {
       this.friendsService.addFriend(username).subscribe({
         next: () => {
           alert('Friend request sent.');
-          this.loadFriends(); // Refresh the list
-          this.friendForm.reset(); // Clear the form
+          this.loadFriends(); 
+          this.friendForm.reset(); 
         },
         error: (err) => alert('Error adding friend: ' + err.message)
       });
@@ -44,7 +44,7 @@ export class FriendManagerComponent implements OnInit {
     this.friendsService.acceptFriend(username).subscribe({
       next: () => {
         alert('Friend request accepted.');
-        this.loadFriends(); // Refresh the list
+        this.loadFriends(); 
       },
       error: (err) => alert('Error accepting friend: ' + err.message)
     });
@@ -54,7 +54,7 @@ export class FriendManagerComponent implements OnInit {
     this.friendsService.blockFriend(username).subscribe({
       next: () => {
         alert('Friend blocked.');
-        this.loadFriends(); // Refresh the list
+        this.loadFriends(); 
       },
       error: (err) => alert('Error blocking friend: ' + err.message)
     });
