@@ -1,24 +1,10 @@
-<div class="pre-sala-container">
-    <div class="pre-sala-header">
-      <h2>Sala de juego</h2>
-    </div>
-  
-    <div class="pre-sala-details">
-      <div class="detail-item">
-        <label>Código de la sala:</label>
-        <span>{{ code }}</span>
-      </div>
-  
-      <div class="detail-item">
-        <label>Creador de la sala:</label>
-        <span>{{ creator }}</span>
-      </div>
-  
-      <div class="detail-item" *ngIf="player2">
-        <label>2do jugador:</label>
-        <span>{{ player2 }}</span>
-      </div>
-    </div>
-  
-  </div>
-  
+<!-- pre-sala.component.html -->
+<div class="room-details">
+  <p><strong>Creador:</strong> {{ creator }}</p>
+  <p><strong>Jugador 2:</strong> {{ player2 }}</p>
+
+  <!-- Renderizar el BoardComponent solo cuando board esté completamente inicializado -->
+  <ng-container *ngIf="board.length > 0 && board[0].length > 0">
+    <app-board [rows]="board.length" [columns]="board[0].length" [roomId]="code?.toString() || ''" [board]="board"></app-board>
+  </ng-container>
+</div>
