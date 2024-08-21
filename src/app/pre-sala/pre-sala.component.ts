@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'app-pre-sala',
   templateUrl: './pre-sala.component.html',
-  styleUrls: ['./pre-sala.component.css']
+  styleUrls: ['./pre-sala.component.scss']
 })
 export class PreSalaComponent {
   @Input() playerOneName: string = '';
