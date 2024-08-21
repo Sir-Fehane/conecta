@@ -17,7 +17,11 @@ export interface Game {
       id: number;
       username: string;
     } | null;
-    createdAt: string;
-    updatedAt: string;
+    winnerUser: {
+        id: number;
+        username: string;
+      } | null;
+    created_at: string;
+    updated_at: string;
 }
   }

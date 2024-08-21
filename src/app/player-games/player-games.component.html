@@ -1,0 +1,29 @@
+<div *ngIf="games.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Fecha y Hora</th>
+          <th>Jugador 1</th>
+          <th>Jugador 2</th>
+          <th>Ganador</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let game of games; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ game.game.created_at | date: 'medium' }}</td>
+          <td>{{ game.game.playerOneUser.username }}</td>
+          <td>{{ game.game.playerTwoUser?.username || 'Desconocido' }}</td>
+          <td>
+            {{ game.game.winner === game.game.playerOne ? game.game.playerOneUser.username : 
+               game.game.winner === game.game.playerTwo ? game.game.playerTwoUser?.username : 'En progreso' }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="games.length === 0">
+    <p>No hay partidas disponibles.</p>
+  </div>
+  

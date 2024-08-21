@@ -13,6 +13,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { FriendManagerComponent } from './components/friend-manager/friend-manager.component';
 import { PreSalaComponent } from './pre-sala/pre-sala.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { PlayerGamesComponent } from './player-games/player-games.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { NavbarComponent } from './navbar/navbar.component';
     DashboardComponent,
     FriendManagerComponent,
     PreSalaComponent,
-    NavbarComponent
+    NavbarComponent,
+    PlayerGamesComponent
   ],
   imports: [
     BrowserModule,
