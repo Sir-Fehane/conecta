@@ -44,7 +44,9 @@ export class DashboardComponent {
     if (this.roomForm.valid) {
       const numsala = this.roomForm.get('code')?.value;
       this.gameService.joinRoom(numsala).subscribe({
-        next: () => alert('Joined room.'),
+        next: () => {alert('Joined room.')
+        this.router.navigate(['/room', numsala]);
+        },
         error: (err) => alert('Error joining room: ' + err.message)
       });
     }
