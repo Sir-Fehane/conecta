@@ -1,0 +1,12 @@
+<div class="board">
+    <div class="row" *ngFor="let row of board; let rowIndex = index">
+      <div
+        class="cell"
+        *ngFor="let cell of row; let colIndex = index"
+        (click)="dropPiece(colIndex)"
+      >
+        <div class="piece" [ngClass]="getPieceClass(rowIndex, colIndex)"></div>
+      </div>
+    </div>
+  </div>
+  

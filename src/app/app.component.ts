@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'conecta';
+  selectedRows: number = 6;
+  selectedColumns: number = 6;
+
+  setBoardSize(rows: number, columns: number): void {
+    this.selectedRows = rows;
+    this.selectedColumns = columns;
+  }
 }

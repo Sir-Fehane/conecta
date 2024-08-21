@@ -1,10 +1,22 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { NgModule } from '@angular/core'
+import { RouterModule, Routes } from '@angular/router'
+import { LoginComponent } from './auth/login/login.component'
+import { RegisterComponent } from './auth/register/register.component'
+import { DashboardComponent } from './dashboard/dashboard.component'
+import { FriendManagerComponent } from './components/friend-manager/friend-manager.component';
 
-const routes: Routes = [];
+import { AuthGuard } from './auth.guard'
+
+const routes: Routes = [
+  { path: 'login', component: LoginComponent, canActivate:[] },
+  { path: 'register', component: RegisterComponent, canActivate:[] },
+  { path: 'dashboard', component: DashboardComponent, canActivate:[AuthGuard] },
+  { path: 'friends', component: FriendManagerComponent, canActivate:[AuthGuard] },
+]
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
+
