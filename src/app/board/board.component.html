@@ -1,4 +1,12 @@
-<div class="board">
+<div class="game-container">
+  <!-- Indicador de turno -->
+  <div class="turn-indicator">
+    <p *ngIf="isMyTurn">Es tu turno, Jugador {{ currentPlayer }}.</p>
+    <p *ngIf="!isMyTurn">Esperando al oponente...</p>
+  </div>
+
+  <!-- Tablero de juego -->
+  <div class="board">
     <div class="row" *ngFor="let row of board; let rowIndex = index">
       <div
         class="cell"
@@ -9,4 +17,4 @@
       </div>
     </div>
   </div>
-  
+</div>
