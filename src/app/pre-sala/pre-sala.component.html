@@ -10,6 +10,11 @@
   </p>
 </div>
 
+<!-- Mostrar mensaje si no es el creador -->
+<div *ngIf="!this.isCreator" class="mt-6 p-6 max-w-md mx-auto bg-yellow-100 text-yellow-800 rounded-xl shadow-md">
+  <p>Esperando al creador para iniciar la partida...</p>
+</div>
+
 <form 
   (ngSubmit)="onSubmit()" 
   #numberForm="ngForm" 
@@ -60,7 +65,3 @@
   </button>
 </form>
 
-<!-- Mostrar mensaje si no es el creador -->
-<div *ngIf="!this.isCreator" class="mt-6 p-6 max-w-md mx-auto bg-yellow-100 text-yellow-800 rounded-xl shadow-md">
-  <p>Esperando al creador para iniciar la partida...</p>
-</div>
