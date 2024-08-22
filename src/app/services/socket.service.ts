@@ -13,29 +13,29 @@ export class SocketService {
   }
 
   private connect(): void {
-    // Configura la conexión al servidor WebSocket
     this.socket = io(environment.apiUrl, {
-      transports: ['websocket', 'polling'], // Usar transportes de websocket y polling
+      transports: ['websocket', 'polling'],
     });
 
-    // Maneja la conexión exitosa
     this.socket.on('connect', () => {
       console.log('Conectado al servidor WebSocket');
     });
 
-    // Maneja la desconexión
     this.socket.on('disconnect', (reason) => {
       console.warn('Desconectado del servidor WebSocket:', reason);
-      // Reconectar si el servidor cierra la conexión
       if (reason === 'io server disconnect') {
         this.socket.connect();
       }
     });
 
-    // Maneja errores de conexión
     this.socket.on('connect_error', (error) => {
       console.error('Error de conexión al WebSocket:', error);
     });
+  }
+
+  // Método para obtener el ID del socket
+  getId(): any {
+    return this.socket.id; // Devuelve el id del socket actual
   }
 
   // Método para escuchar eventos
@@ -54,8 +54,8 @@ export class SocketService {
       this.socket.disconnect();
     }
   }
+
   off(event: string) {
     this.socket.off(event);
   }
-
 }

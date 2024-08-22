@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SocketService } from '../services/socket.service';
+import { GameService } from '../services/game.service';
 
 @Component({
   selector: 'app-board',
@@ -10,22 +11,27 @@ import { SocketService } from '../services/socket.service';
 export class BoardComponent implements OnInit {
   rows: number = 5;
   columns: number = 5;
-  roomId: string = ''; // Se recibe del parámetro de consulta
+  roomId: number = 0; // Se recibe del parámetro de consulta
   board: number[][] = [];
   currentPlayer: number = 1;
   isMyTurn: boolean = true; // Asume que el jugador 1 empieza
+  playerOne: string = '';
+  playerTwo: string = '';
 
-  constructor(private route: ActivatedRoute, private socketService: SocketService) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private socketService: SocketService, 
+    private gameService: GameService
+  ) {}
 
   ngOnInit(): void {
-    // Extraer los parámetros de consulta
     this.route.queryParams.subscribe(params => {
-      this.rows = +params['height'] || 5; // Convertir a número y asignar valor predeterminado
-      this.columns = +params['width'] || 5; // Convertir a número y asignar valor predeterminado
-      this.roomId = params['code'] || ''; // Asignar el roomId
-
+      this.rows = +params['height'] || 5;
+      this.columns = +params['width'] || 5;
+      this.roomId = params['code'] || 0;
       this.initializeBoard();
       this.listenToSocketEvents();
+      this.getBoardPlayers(); // Obtener los jugadores de la sala
     });
   }
 
@@ -37,10 +43,15 @@ export class BoardComponent implements OnInit {
 
   // Escuchar eventos de WebSocket
   private listenToSocketEvents(): void {
+    // Escuchar cuando comienza el juego y se asigna el primer turno
+    this.socketService.on('startGame', (data: any) => {
+      this.isMyTurn = this.socketService.getId() === data.currentPlayer; // Verificar si es mi turno
+    });
+
+    // Escuchar movimientos de otros jugadores
     this.socketService.on(`move_${this.roomId}`, (data: any) => {
       this.board = data.board;
-      this.currentPlayer = data.currentPlayer;
-      this.isMyTurn = !this.isMyTurn;
+      this.isMyTurn = this.socketService.getId() === data.currentPlayer; // Verificar si es mi turno
     });
   }
 
@@ -60,7 +71,7 @@ export class BoardComponent implements OnInit {
         } else {
           this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
           this.isMyTurn = !this.isMyTurn;
-          this.socketService.emit('move', { roomId: this.roomId, board: this.board, currentPlayer: this.currentPlayer });
+          this.socketService.emit('move', { roomCode: this.roomId, board: this.board, currentPlayer: this.socketService.getId() });
         }
         break;
       }
@@ -94,4 +105,19 @@ export class BoardComponent implements OnInit {
     if (this.board[row][col] === 2) return 'player2';
     return '';
   }
+
+  getBoardPlayers() {
+  this.gameService.getRoomDetails(this.roomId).subscribe((data: any) => {
+    this.playerOne = data.game.playerOneUser.username;
+    this.playerTwo = data.game.playerTwoUser.username;
+    console.log(this.playerOne, this.playerTwo);
+
+    // Emitir un nuevo evento solo para el tablero
+    this.socketService.emit('joinWithPlayers', {
+      roomCode: this.roomId,
+      playerOne: this.playerOne,
+      playerTwo: this.playerTwo
+    });
+  });
+}
 }
