@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GameService } from '../services/game.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-board',
@@ -19,7 +20,8 @@ export class BoardComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute, 
-    private gameService: GameService
+    private gameService: GameService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -52,6 +54,11 @@ export class BoardComponent implements OnInit {
       this.isMyTurn = this.gameService.getId() === data.currentPlayer; // Verificar si es mi turno
       this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
     });
+
+    this.gameService.on('gameOver', (data: any) => {
+      alert(`Jugador ${data.winner} gana!`);
+      this.router.navigate(['/dashboard']);
+    });
   }
 
   // Manejar el drop de una pieza
@@ -65,8 +72,6 @@ export class BoardComponent implements OnInit {
         this.board[rowIndex][colIndex] = this.currentPlayer;
         if (this.checkWin(rowIndex, colIndex)) {
           this.gameService.emit('gameWon', { roomId: this.roomId, winner: this.currentPlayer });
-          alert(`Jugador ${this.currentPlayer} gana!`);
-          this.initializeBoard();
         } else {
          /* this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
           this.isMyTurn = !this.isMyTurn; */
