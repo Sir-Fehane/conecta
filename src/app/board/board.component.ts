@@ -57,7 +57,11 @@ export class BoardComponent implements OnInit {
     });
 
     this.gameService.on('gameOver', (data: any) => {
-      alert(`Jugador ${data.winner} gana!`);
+      alert(`¡${data.winner} gana la partida contra ${data.loser}!`);
+
+      this.gameService.setWinner(this.roomId, data.winner, data.loser).subscribe(() => {
+        this.router.navigate(['/dashboard']);
+      });
       
       this.router.navigate(['/dashboard']);
     });
@@ -74,7 +78,8 @@ export class BoardComponent implements OnInit {
         this.board[rowIndex][colIndex] = this.currentPlayer;
         if (this.checkWin(rowIndex, colIndex)) {
           const winnerUsername = this.currentPlayer === 1 ? this.playerOne : this.playerTwo;
-          this.gameService.emit('gameWon', { roomId: this.roomId, winner: winnerUsername });
+          const loserUsername = this.currentPlayer === 1 ? this.playerTwo : this.playerOne;
+          this.gameService.emit('gameWon', { roomId: this.roomId, winner: winnerUsername, loser: loserUsername });
         } else {
          /* this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
           this.isMyTurn = !this.isMyTurn; */

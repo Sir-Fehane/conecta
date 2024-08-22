@@ -54,6 +54,9 @@ export class GameService {
   getRoomDetails(numsala: number) {
     return this.http.get<Game>(`${this.apiUrl}/room/${numsala}`);
   }
+  setWinner(numsala: number, winner: string, loser: string) {
+    return this.http.post(`${this.apiUrl}/setWinner`, { numsala, winner, loser }, { headers: this.getHeaders() });
+  }
   getPlayerGames(): Observable<Game[]> {
     return this.http.get<Game[]>(`${this.apiUrl}/history`, { headers: this.getHeaders() });
   }
