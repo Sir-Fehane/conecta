@@ -1,29 +1,21 @@
-<div *ngIf="games.length > 0">
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Fecha y Hora</th>
-          <th>Jugador 1</th>
-          <th>Jugador 2</th>
-          <th>Ganador</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let game of games; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ game.game.created_at | date: 'medium' }}</td>
-          <td>{{ game.game.playerOneUser.username }}</td>
-          <td>{{ game.game.playerTwoUser?.username || 'Desconocido' }}</td>
-          <td>
-            {{ game.game.winner === game.game.playerOne ? game.game.playerOneUser.username : 
-               game.game.winner === game.game.playerTwo ? game.game.playerTwoUser?.username : 'En progreso' }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div *ngIf="games.length === 0">
-    <p>No hay partidas disponibles.</p>
-  </div>
-  
+<div class="table-container">
+  <table *ngIf="gameHistory && gameHistory.length > 0">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Jugador 1</th>
+        <th>Jugador 2</th>
+        <th>Ganador</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let game of gameHistory">
+        <td>{{ game.created_at | date:'short' }}</td>
+        <td>{{ game.playerOneUser.username }}</td>
+        <td>{{ game.playerTwoUser.username }}</td>
+        <td>{{ game.winnerUser ? game.winnerUser.username : 'Empate' }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <p *ngIf="!gameHistory || gameHistory.length === 0">No hay partidas registradas.</p>
+</div>

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Game } from '../game';
 import { GameService } from '../services/game.service';
 
 @Component({
@@ -8,15 +7,23 @@ import { GameService } from '../services/game.service';
   styleUrls: ['./player-games.component.scss']
 })
 export class PlayerGamesComponent implements OnInit {
-    games: Game[] = [];
+    gameHistory: any[] = [];
   
     constructor(private gameService: GameService) {}
   
     ngOnInit(): void {
-  
-      this.gameService.getPlayerGames().subscribe((data) => {
-        this.games = data;
-        console.log(data)
-      });
+      this.loadGameHistory();
+    }
+
+    loadGameHistory(): void {
+      this.gameService.getPlayerGames().subscribe(
+        (data) => {
+          this.gameHistory = data;
+          console.log('Game history:', this.gameHistory);
+        },
+        (error) => {
+          console.error('Error fetching game history:', error);
+        }
+      );
     }
   }
