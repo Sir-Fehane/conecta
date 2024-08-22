@@ -56,8 +56,14 @@ export class GameService {
     this.socket.emit('formSubmit', { roomCode, formData });
   }
 
-  onFormSubmit(callback: () => void) {
-    this.socket.on('navigateToBoard', callback);
+  onFormSubmit(callback: (formData: any) => void) {
+    this.socket.on('navigateToBoard', (formData) => {
+      if (formData && formData.width && formData.height) {
+        callback(formData);
+      } else {
+        console.error('Form data is missing or incomplete:', formData);
+      }
+    });
   }
   
 }

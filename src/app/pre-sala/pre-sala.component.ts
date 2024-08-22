@@ -29,9 +29,14 @@ export class PreSalaComponent implements OnInit {
       this.getRoomDetails();
       this.getPlayer();
       this.waitForSecondPlayer();
-      
-      this.gameService.onFormSubmit(() => {
-        this.router.navigate(['/board'], { queryParams: { width: this.width, height: this.height, code: this.code } });
+  
+      // Escuchar el evento de redirección para ambos jugadores con los datos recibidos
+      this.gameService.onFormSubmit((formData) => {
+        if (formData && formData.width && formData.height) {
+          this.router.navigate(['/board'], { queryParams: { width: formData.width, height: formData.height, code: this.code } });
+        } else {
+          console.error('Received invalid form data:', formData);
+        }
       });
     });
   }
@@ -79,6 +84,7 @@ export class PreSalaComponent implements OnInit {
 
   onSubmit() {
     if (this.code !== null) {
+      console.log('Form submitted:', this.width, this.height);
       this.gameService.emitFormSubmit(this.code, { width: this.width, height: this.height });
 
       this.gameService.onFormSubmit(() => {
