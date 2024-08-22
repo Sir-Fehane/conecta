@@ -12,11 +12,27 @@ import { io, Socket } from 'socket.io-client';
 export class GameService {
 
   private apiUrl = environment.apiUrl;
-  public socket: Socket;
+  public socket: Socket 
 
   constructor(private http: HttpClient, private cookieService: CookieService) {
-    this.socket = io(this.apiUrl); // Conecta el cliente Socket.IO al servidor
+    this.socket = io(environment.apiUrl);
+    this.socket.on('connect', () => {
+      console.log('Conectado al servidor WebSocket');
+    });
+
+    this.socket.on('disconnect', (reason) => {
+      console.warn('Desconectado del servidor WebSocket:', reason);
+      if (reason === 'io server disconnect') {
+        this.socket.connect();
+      }
+    });
+
+    this.socket.on('connect_error', (error) => {
+      console.error('Error de conexión al WebSocket:', error);
+    });
+    
   }
+
   private getHeaders() {
     const token = this.cookieService.get('TokenAdonis');
     return new HttpHeaders({
@@ -64,6 +80,32 @@ export class GameService {
         console.error('Form data is missing or incomplete:', formData);
       }
     });
+  }
+
+  // Método para obtener el ID del socket
+  getId(): any {
+    return this.socket.id; // Devuelve el id del socket actual
+  }
+
+  // Método para escuchar eventos
+  on(event: string, callback: (data: any) => void): void {
+    this.socket.on(event, callback);
+  }
+
+  // Método para emitir eventos
+  emit(event: string, data: any): void {
+    this.socket.emit(event, data);
+  }
+
+  // Método para desconectar
+  disconnect(): void {
+    if (this.socket) {
+      this.socket.disconnect();
+    }
+  }
+
+  off(event: string) {
+    this.socket.off(event);
   }
   
 }

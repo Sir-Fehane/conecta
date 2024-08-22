@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SocketService } from '../services/socket.service';
 import { GameService } from '../services/game.service';
 
 @Component({
@@ -20,7 +19,6 @@ export class BoardComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute, 
-    private socketService: SocketService, 
     private gameService: GameService
   ) {}
 
@@ -44,14 +42,14 @@ export class BoardComponent implements OnInit {
   // Escuchar eventos de WebSocket
   private listenToSocketEvents(): void {
     // Escuchar cuando comienza el juego y se asigna el primer turno
-    this.socketService.on('startGame', (data: any) => {
-      this.isMyTurn = this.socketService.getId() === data.currentPlayer; // Verificar si es mi turno
+    this.gameService.on('startGame', (data: any) => {
+      this.isMyTurn = this.gameService.getId() === data.currentPlayer; // Verificar si es mi turno
     });
 
     // Escuchar movimientos de otros jugadores
-    this.socketService.on(`move_${this.roomId}`, (data: any) => {
+    this.gameService.on(`move_${this.roomId}`, (data: any) => {
       this.board = data.board;
-      this.isMyTurn = this.socketService.getId() === data.currentPlayer; // Verificar si es mi turno
+      this.isMyTurn = this.gameService.getId() === data.currentPlayer; // Verificar si es mi turno
     });
   }
 
@@ -65,13 +63,13 @@ export class BoardComponent implements OnInit {
       if (this.board[rowIndex][colIndex] === 0) {
         this.board[rowIndex][colIndex] = this.currentPlayer;
         if (this.checkWin(rowIndex, colIndex)) {
-          this.socketService.emit('gameWon', { roomId: this.roomId, winner: this.currentPlayer });
+          this.gameService.emit('gameWon', { roomId: this.roomId, winner: this.currentPlayer });
           alert(`Jugador ${this.currentPlayer} gana!`);
           this.initializeBoard();
         } else {
           this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
           this.isMyTurn = !this.isMyTurn;
-          this.socketService.emit('move', { roomCode: this.roomId, board: this.board, currentPlayer: this.socketService.getId() });
+          this.gameService.emit('move', { roomCode: this.roomId, board: this.board, currentPlayer: this.gameService.getId() });
         }
         break;
       }
@@ -113,7 +111,7 @@ export class BoardComponent implements OnInit {
     console.log(this.playerOne, this.playerTwo);
 
     // Emitir un nuevo evento solo para el tablero
-    this.socketService.emit('joinWithPlayers', {
+    this.gameService.emit('joinWithPlayers', {
       roomCode: this.roomId,
       playerOne: this.playerOne,
       playerTwo: this.playerTwo
