@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GameService } from 'src/app/services/game.service';
-import { Game } from 'src/app/game'; // Ajusta la ruta según tu modelo
+import { Game } from 'src/app/game';
 
 @Component({
   selector: 'app-pre-sala',
@@ -12,11 +12,10 @@ export class PreSalaComponent implements OnInit {
   code: number | null = null;
   creator: string | null = null;
   player2: string | null = null;
-  board: number[][] = [];
+  currentUser: string | null = null;  // Almacena el usuario actual
   width: number = 9;
   height: number = 9;
-  number1: number = 6;
-  number2: number = 6;
+  isCreator: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,6 +27,12 @@ export class PreSalaComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.code = params['code'];
       this.getRoomDetails();
+      this.getPlayer();
+      this.waitForSecondPlayer();
+      
+      this.gameService.onFormSubmit(() => {
+        this.router.navigate(['/board'], { queryParams: { width: this.width, height: this.height, code: this.code } });
+      });
     });
   }
 
@@ -37,16 +42,8 @@ export class PreSalaComponent implements OnInit {
     this.gameService.getRoomDetails(this.code).subscribe(
       (response: Game) => {
         const game = response.game;
-
         this.creator = game.playerOneUser.username;
         this.player2 = game.playerTwoUser?.username || 'Esperando jugador...';
-
-        // Set width and height
-        this.width = game.width;
-        this.height = game.height;
-
-        // Initialize board
-        this.initializeBoard(game.board);
       },
       (error) => {
         console.error('Error getting room details:', error);
@@ -54,20 +51,51 @@ export class PreSalaComponent implements OnInit {
     );
   }
 
-  initializeBoard(boardString: string) {
-    this.board = Array(this.height).fill(0).map(() => Array(this.width).fill(0));
-    
-    const boardArray = JSON.parse(boardString);
-    
-    for (let r = 0; r < this.height; r++) {
-      for (let c = 0; c < this.width; c++) {
-        this.board[r][c] = boardArray[r][c] || 0;
+  getPlayer() {
+    this.gameService.getPlayer().subscribe(
+      (response) => {
+        this.currentUser = response.username;  // Almacena el usuario actual
+        this.isCr();
+        console.log('Current user:', this.currentUser);
+        console.log('Creator:', this.creator);
+        this.gameService.socket.emit('joinRoom', this.code, this.currentUser);
+      },
+      (error) => {
+        console.error('Error getting player:', error);
       }
+    );
+  }
+
+  waitForSecondPlayer() {
+    if (this.code !== null) {
+      this.gameService.waitForPlayerJoin(this.code);
+
+      this.gameService.onPlayerJoined((player) => {
+        console.log('Player joined:', player);
+        this.player2 = player.username;
+      });
     }
   }
 
   onSubmit() {
-    console.log(this.width, this.height);
-    this.router.navigate(['/board'], { queryParams: { width: this.width, height: this.height, code: this.code } });
+    if (this.code !== null) {
+      this.gameService.emitFormSubmit(this.code, { width: this.width, height: this.height });
+
+      this.gameService.onFormSubmit(() => {
+        this.router.navigate(['/board'], { queryParams: { width: this.width, height: this.height, code: this.code } });
+      });
+    }
+  }
+
+  isCr() {
+    if (this.currentUser == this.creator) {
+      this.isCreator = true;
+      return
+    }
+    else {
+      this.isCreator = false;
+      return
+    }
   }
 }
+

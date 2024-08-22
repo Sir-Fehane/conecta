@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from 'src/environments/environment';
 import { Game } from '../game';
+import { io, Socket } from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,11 @@ import { Game } from '../game';
 export class GameService {
 
   private apiUrl = environment.apiUrl;
+  public socket: Socket;
 
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
-
+  constructor(private http: HttpClient, private cookieService: CookieService) {
+    this.socket = io(this.apiUrl); // Conecta el cliente Socket.IO al servidor
+  }
   private getHeaders() {
     const token = this.cookieService.get('TokenAdonis');
     return new HttpHeaders({
@@ -37,6 +40,24 @@ export class GameService {
   }
   getPlayerGames(): Observable<Game[]> {
     return this.http.get<Game[]>(`${this.apiUrl}/history`, { headers: this.getHeaders() });
+  }
+  getPlayer(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/me`, { headers: this.getHeaders() });
+  }
+  waitForPlayerJoin(roomCode: number) {
+    this.socket.emit('waitForPlayer', roomCode);
+  }
+
+  onPlayerJoined(callback: (player: any) => void) {
+    this.socket.on('playerJoined', callback);
+  }
+
+  emitFormSubmit(roomCode: number, formData: any) {
+    this.socket.emit('formSubmit', { roomCode, formData });
+  }
+
+  onFormSubmit(callback: () => void) {
+    this.socket.on('navigateToBoard', callback);
   }
   
 }
