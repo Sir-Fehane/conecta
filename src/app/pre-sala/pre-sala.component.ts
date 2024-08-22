@@ -83,6 +83,10 @@ export class PreSalaComponent implements OnInit {
   }
 
   onSubmit() {
+    if(this.player2 === 'Esperando jugador...') {
+      alert('Espera a que se una otro jugador');
+      return;
+    }
     if (this.code !== null) {
       console.log('Form submitted:', this.width, this.height);
       this.gameService.emitFormSubmit(this.code, { width: this.width, height: this.height });

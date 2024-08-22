@@ -1,10 +1,5 @@
-<div class="game-room p-6 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-6">
-  <h2 class="text-2xl font-semibold text-gray-900">Friends</h2>
-  <button 
-    (click)="Friends()" 
-    class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-    See Friends
-  </button>
+<app-navbar></app-navbar>
+<div class="game-room mt-40 p-6 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-6">
 
   <h2 class="text-2xl font-semibold text-gray-900">Create a Game Room</h2>
   <button 
@@ -36,28 +31,6 @@
       type="submit" 
       class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
       Join Room
-    </button>
-  </form>
-
-  <h2 class="text-2xl font-semibold text-gray-900">Join a Friend's Game Room</h2>
-  <form 
-    [formGroup]="friendForm" 
-    (ngSubmit)="joinRoomByFriend()" 
-    class="space-y-4">
-    <label for="username" class="block text-sm font-medium text-gray-700">
-      Friend username:
-    </label>
-    <input 
-      id="username" 
-      formControlName="username" 
-      type="text" 
-      placeholder="Enter Friend's username" 
-      class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-    <button 
-      type="submit" 
-      class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-      Join Friend's Room
     </button>
   </form>
 </div>

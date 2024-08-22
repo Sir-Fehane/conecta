@@ -1,21 +1,24 @@
-<div class="table-container">
-  <table *ngIf="gameHistory && gameHistory.length > 0">
+<app-navbar></app-navbar>
+<div class="table-container mx-auto p-6 max-w-4xl bg-white shadow-lg rounded-lg">
+  <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Historial de Partidas</h2>
+  <table *ngIf="gameHistory && gameHistory.length > 0" class="min-w-full bg-white border border-gray-300 rounded-lg">
     <thead>
-      <tr>
-        <th>Fecha</th>
-        <th>Jugador 1</th>
-        <th>Jugador 2</th>
-        <th>Ganador</th>
+      <tr class="bg-gradient-to-r from-blue-500 to-blue-700 text-white">
+        <th class="py-3 px-4 border-b text-left">Fecha</th>
+        <th class="py-3 px-4 border-b text-left">Jugador 1</th>
+        <th class="py-3 px-4 border-b text-left">Jugador 2</th>
+        <th class="py-3 px-4 border-b text-left">Ganador</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let game of gameHistory">
-        <td>{{ game.created_at | date:'short' }}</td>
-        <td>{{ game.playerOneUser.username }}</td>
-        <td>{{ game.playerTwoUser.username }}</td>
-        <td>{{ game.winnerUser ? game.winnerUser.username : 'Empate' }}</td>
+      <tr *ngFor="let game of gameHistory" class="hover:bg-gray-100 transition duration-300 ease-in-out">
+        <td class="py-3 px-4 border-b">{{ game.created_at | date:'short' }}</td>
+        <td class="py-3 px-4 border-b">{{ game.playerOneUser.username }}</td>
+        <td class="py-3 px-4 border-b">{{ game.playerTwoUser.username }}</td>
+        <td class="py-3 px-4 border-b">{{ game.winnerUser ? game.winnerUser.username : 'Empate' }}</td>
       </tr>
     </tbody>
   </table>
-  <p *ngIf="!gameHistory || gameHistory.length === 0">No hay partidas registradas.</p>
+
+  <p *ngIf="!gameHistory || gameHistory.length === 0" class="text-center text-gray-500 mt-6">No hay partidas registradas.</p>
 </div>

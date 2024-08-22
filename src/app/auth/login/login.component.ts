@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   loginForm: FormGroup
+  errorMessage: string = ''
 
   constructor(
     private fb: FormBuilder,
@@ -28,17 +29,13 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response: any) => {
-          // Acceder correctamente al token en el response
           const token = response.token.token;
-
-          // Guardar el token en una cookie
           this.cookieService.set('TokenAdonis', token);
-
-          // Redirigir al dashboard
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
           console.error('Login failed', error);
+          this.errorMessage = 'Credenciales inválidas. Por favor, inténtalo de nuevo.';
         }
       });
     }

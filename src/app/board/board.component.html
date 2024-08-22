@@ -1,19 +1,22 @@
-<div class="game-container">
+<app-navbar></app-navbar>
+<div class="game-container flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
   <!-- Indicador de turno -->
-  <div class="turn-indicator">
+  <div class="turn-indicator mb-4 text-lg font-semibold text-gray-800">
     <p *ngIf="isMyTurn">Es tu turno, Jugador {{ currentPlayer }}.</p>
     <p *ngIf="!isMyTurn">Esperando al oponente...</p>
   </div>
 
-  <!-- Tablero de juego -->
-  <div class="board">
-    <div class="row" *ngFor="let row of board; let rowIndex = index">
-      <div
-        class="cell"
-        *ngFor="let cell of row; let colIndex = index"
-        (click)="dropPiece(colIndex)"
-      >
-        <div class="piece" [ngClass]="getPieceClass(rowIndex, colIndex)"></div>
+  <!-- Contenedor del tablero -->
+  <div class="board bg-blue-600 p-6 rounded-lg shadow-lg">
+    <div class="grid grid-rows-6 gap-2">
+      <div class="row grid grid-cols-7 gap-2" *ngFor="let row of board; let rowIndex = index">
+        <div
+          class="cell bg-gray-100 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer"
+          *ngFor="let cell of row; let colIndex = index"
+          (click)="dropPiece(colIndex)"
+        >
+          <div class="piece w-10 h-10 rounded-full" [ngClass]="getPieceClass(rowIndex, colIndex)"></div>
+        </div>
       </div>
     </div>
   </div>

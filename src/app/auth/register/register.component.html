@@ -1,28 +1,35 @@
-<div class="register-container">
-    <h2>Register</h2>
-    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+<div class="register-container flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
+    <div class="flex justify-center mb-6">
+      <img src="assets/logo.webp" alt="Logo" class="h-10 w-25">
+    </div>
+    <h2 class="text-2xl font-bold text-gray-800 text-center mb-8">Register</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="space-y-6">
       <div>
-        <label for="name">Name</label>
-        <input id="name" formControlName="name" type="text" />
+        <label for="name" class="block text-gray-700 font-medium mb-2">Nombre</label>
+        <input id="name" formControlName="name" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div>
-        <label for="lastname">Last Name</label>
-        <input id="lastname" formControlName="lastname" type="text" />
+        <label for="lastname" class="block text-gray-700 font-medium mb-2">Apellido</label>
+        <input id="lastname" formControlName="lastname" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div>
-        <label for="email">Email</label>
-        <input id="email" formControlName="email" type="email" />
+        <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
+        <input id="email" formControlName="email" type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div>
-        <label for="username">Username</label>
-        <input id="username" formControlName="username" type="text" />
+        <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
+        <input id="username" formControlName="username" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div>
-        <label for="password">Password</label>
-        <input id="password" formControlName="password" type="password" />
+        <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+        <input id="password" formControlName="password" type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
-      <button type="submit" [disabled]="!registerForm.valid">Register</button>
+      <button type="submit" [disabled]="!registerForm.valid" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:bg-blue-300">
+        Register
+      </button>
     </form>
   </div>
+</div>
+
 <router-outlet></router-outlet>
-  
