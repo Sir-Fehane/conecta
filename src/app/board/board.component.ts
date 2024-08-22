@@ -46,6 +46,7 @@ export class BoardComponent implements OnInit {
     // Escuchar cuando comienza el juego y se asigna el primer turno
     this.gameService.on('startGame', (data: any) => {
       this.isMyTurn = this.gameService.getId() === data.currentPlayer; // Verificar si es mi turno
+      this.updatePlayerDetails(data.players);
     });
 
     // Escuchar movimientos de otros jugadores
@@ -57,6 +58,7 @@ export class BoardComponent implements OnInit {
 
     this.gameService.on('gameOver', (data: any) => {
       alert(`Jugador ${data.winner} gana!`);
+      
       this.router.navigate(['/dashboard']);
     });
   }
@@ -71,7 +73,8 @@ export class BoardComponent implements OnInit {
       if (this.board[rowIndex][colIndex] === 0) {
         this.board[rowIndex][colIndex] = this.currentPlayer;
         if (this.checkWin(rowIndex, colIndex)) {
-          this.gameService.emit('gameWon', { roomId: this.roomId, winner: this.currentPlayer });
+          const winnerUsername = this.currentPlayer === 1 ? this.playerOne : this.playerTwo;
+          this.gameService.emit('gameWon', { roomId: this.roomId, winner: winnerUsername });
         } else {
          /* this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
           this.isMyTurn = !this.isMyTurn; */
@@ -123,5 +126,11 @@ export class BoardComponent implements OnInit {
       playerTwo: this.playerTwo
     });
   });
-}
+  }
+  private updatePlayerDetails(players: any[]): void {
+    const playerOne = players[0] || {};
+    const playerTwo = players[1] || {};
+    this.playerOne = playerOne.username || '';
+    this.playerTwo = playerTwo.username || '';
+  }
 }
