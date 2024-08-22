@@ -50,6 +50,7 @@ export class BoardComponent implements OnInit {
     this.gameService.on(`move_${this.roomId}`, (data: any) => {
       this.board = data.board;
       this.isMyTurn = this.gameService.getId() === data.currentPlayer; // Verificar si es mi turno
+      this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
     });
   }
 
@@ -67,8 +68,8 @@ export class BoardComponent implements OnInit {
           alert(`Jugador ${this.currentPlayer} gana!`);
           this.initializeBoard();
         } else {
-          this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
-          this.isMyTurn = !this.isMyTurn;
+         /* this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
+          this.isMyTurn = !this.isMyTurn; */
           this.gameService.emit('move', { roomCode: this.roomId, board: this.board, currentPlayer: this.gameService.getId() });
         }
         break;
